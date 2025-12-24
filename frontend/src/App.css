@@ -1,42 +1,97 @@
+/* Thiết lập nền tảng chuẩn cho Web3 App */
+:root {
+  --sui-cyan: #00D1FF;
+  --bg-dark: #050B18;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --border-white: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: white;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden; /* Tránh lỗi tràn ngang trên mobile */
+}
+
+/* Xóa bỏ giới hạn mặc định của Vite */
 #root {
-  max-width: 1280px;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Container chuẩn cho mọi trang */
+.container {
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 0 1.25rem; /* 20px lề cho mobile */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+@media (min-width: 768px) {
+  .container {
+    padding: 0 2.5rem; /* 40px lề cho tablet/desktop */
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+/* Hệ thống Grid Responsive cho danh sách NFT/Đấu giá */
+.auction-grid {
+  display: grid;
+  gap: 1.5rem;
+  /* Mặc định 1 cột (Mobile) */
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  padding: 1.5rem 0;
+}
+
+/* Tablet (2 cột) */
+@media (min-width: 640px) {
+  .auction-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.card {
-  padding: 2em;
+/* Laptop (3 cột) */
+@media (min-width: 1024px) {
+  .auction-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
-.read-the-docs {
-  color: #888;
+/* Desktop lớn (4 cột) */
+@media (min-width: 1280px) {
+  .auction-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Card vật phẩm đấu giá */
+.card-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border-white);
+  border-radius: 1.5rem;
+  padding: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.card-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--sui-cyan);
+}
+
+/* Utility classes cho Mobile ẩn/hiện */
+.hidden-mobile {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hidden-mobile {
+    display: block;
+  }
 }

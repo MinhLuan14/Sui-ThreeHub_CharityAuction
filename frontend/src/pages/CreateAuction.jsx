@@ -118,89 +118,80 @@ export default function CreateAuction() {
     };
 
     return (
-        <div className="pt-32 pb-20 min-h-screen text-white relative overflow-hidden">
+        <div className="pt-20 md:pt-32 pb-10 md:pb-20 min-h-screen text-white relative overflow-hidden">
 
-            {/* --- COMPONENT THÔNG BÁO CHÍNH GIỮA MÀN HÌNH (MODAL) --- */}
+            {/* --- LOADING MODAL (Đã tối ưu width cho Mobile) --- */}
             <AnimatePresence>
                 {isProcessing && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md px-4"
                     >
                         <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            className="bg-[#0A1120] border border-blue-500/30 p-10 rounded-[40px] shadow-[0_0_50px_rgba(37,99,235,0.2)] flex flex-col items-center max-w-sm w-full mx-6"
+                            initial={{ scale: 0.9 }}
+                            animate={{ scale: 1 }}
+                            className="bg-[#0A1120] border border-blue-500/30 p-8 md:p-10 rounded-[30px] md:rounded-[40px] shadow-2xl flex flex-col items-center max-w-sm w-full"
                         >
                             <div className="relative mb-6">
                                 <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
-                                <Loader2 className="animate-spin text-blue-500 relative z-10" size={50} />
+                                <Loader2 className="animate-spin text-blue-500 relative z-10" size={40} />
                             </div>
-
-                            <h3 className="text-xl font-black italic uppercase tracking-tighter mb-2 text-center">
+                            <h3 className="text-lg md:text-xl font-black italic uppercase tracking-tighter mb-2 text-center">
                                 Đang xử lý <span className="text-blue-500">Dữ liệu</span>
                             </h3>
-
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] text-center leading-relaxed">
+                            <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] text-center leading-relaxed">
                                 Hệ thống đang nạp tranh lên IPFS <br /> & xác thực trên Sui Blockchain
                             </p>
-
-                            <div className="mt-8 w-full bg-white/5 h-1 rounded-full overflow-hidden">
-                                <motion.div
-                                    className="h-full bg-blue-600"
-                                    animate={{ x: ["-100%", "100%"] }}
-                                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                                />
-                            </div>
                         </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
             {/* Background Glows */}
-            <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
-            <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none" />
+            <div className="fixed top-[-10%] left-[-10%] w-[60%] md:w-[40%] h-[40%] bg-blue-600/10 blur-[80px] md:blur-[120px] rounded-full pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <header className="text-center mb-16 space-y-4">
+            <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+                {/* HEADER - Responsive Text Size */}
+                <header className="text-center mb-10 md:mb-16 space-y-4">
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40"
+                        className="text-4xl sm:text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40"
                     >
                         CREATE <span className="text-blue-500">IMPACT</span>
                     </motion.h1>
-                    <div className="flex items-center justify-center gap-3">
-                        <div className="h-px w-12 bg-blue-500/50" />
-                        <p className="text-blue-400 font-black uppercase tracking-[0.4em] text-[10px]">Đúc NFT & Mở đấu giá từ thiện</p>
-                        <div className="h-px w-12 bg-blue-500/50" />
+                    <div className="flex items-center justify-center gap-2 md:gap-3">
+                        <div className="h-px w-8 md:w-12 bg-blue-500/50" />
+                        <p className="text-blue-400 font-black uppercase tracking-[0.2em] md:tracking-[0.4em] text-[8px] md:text-[10px]">Đúc NFT & Mở đấu giá từ thiện</p>
+                        <div className="h-px w-8 md:w-12 bg-blue-500/50" />
                     </div>
                 </header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+
                     {/* LEFT: MEDIA UPLOAD AREA */}
-                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="lg:col-span-5 space-y-6">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="lg:col-span-5 w-full">
                         <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-[45px] blur opacity-20 group-hover:opacity-40 transition duration-700" />
-                            <div className="relative bg-[#0A1120] border border-white/10 rounded-[40px] p-4 min-h-[500px] flex flex-col items-center justify-center overflow-hidden shadow-2xl">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-[35px] md:rounded-[45px] blur opacity-10 group-hover:opacity-30 transition duration-700" />
+                            <div className="relative bg-[#0A1120] border border-white/10 rounded-[30px] md:rounded-[40px] p-2 md:p-4 min-h-[350px] md:min-h-[500px] flex flex-col items-center justify-center overflow-hidden shadow-2xl">
                                 <AnimatePresence mode='wait'>
                                     {preview ? (
-                                        <motion.div key="preview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative w-full h-full flex flex-col items-center">
-                                            <img src={preview} className="w-full aspect-square object-cover rounded-[32px] shadow-2xl" alt="Preview" />
-                                            <button onClick={() => { setPreview(null); setSelectedFile(null); }} className="absolute top-4 right-4 p-2 bg-black/60 backdrop-blur-md rounded-full hover:bg-red-500 transition-colors">
-                                                <X size={20} />
+                                        <motion.div key="preview" className="relative w-full h-full flex flex-col items-center">
+                                            <img src={preview} className="w-full aspect-square object-cover rounded-[25px] md:rounded-[32px]" alt="Preview" />
+                                            <button onClick={() => { setPreview(null); setSelectedFile(null); }} className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-full hover:bg-red-500 transition-colors">
+                                                <X size={18} />
                                             </button>
                                         </motion.div>
                                     ) : (
-                                        <motion.div key="upload" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center p-10 space-y-6">
-                                            <div className="w-24 h-24 bg-blue-500/5 rounded-full flex items-center justify-center mx-auto border border-blue-500/20">
-                                                <Upload className="text-blue-500 animate-bounce" size={32} />
+                                        <motion.div key="upload" className="text-center p-6 md:p-10 space-y-4">
+                                            <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-500/5 rounded-full flex items-center justify-center mx-auto border border-blue-500/20">
+                                                <Upload className="text-blue-500 animate-bounce" size={24} />
                                             </div>
-                                            <div className="space-y-2">
-                                                <h3 className="text-xl font-black italic uppercase">Tải lên tác phẩm</h3>
-                                                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest leading-relaxed">Hỗ trợ JPG, PNG, GIF (Max 10MB)</p>
+                                            <div className="space-y-1">
+                                                <h3 className="text-lg font-black italic uppercase">Tải lên tác phẩm</h3>
+                                                <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">JPG, PNG, GIF (Max 10MB)</p>
                                             </div>
                                             <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleImageChange} />
                                         </motion.div>
@@ -211,58 +202,63 @@ export default function CreateAuction() {
                     </motion.div>
 
                     {/* RIGHT: FORM DATA AREA */}
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-7">
-                        <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[50px] p-8 md:p-12 space-y-10 shadow-3xl">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-7">
+                        <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[35px] md:rounded-[50px] p-6 md:p-12 space-y-6 md:space-y-10">
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Tên vật phẩm */}
                                 <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] ml-2 flex items-center gap-2">
+                                    <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
                                         <Tag size={12} /> Tên vật phẩm
                                     </label>
-                                    <input required name="name" placeholder="VÍ DỤ: TRỜI ĐÊM ĐÀ LẠT..." className="w-full bg-black/40 px-6 py-5 rounded-[22px] border border-white/5 outline-none focus:border-blue-500/50 transition-all font-black uppercase text-xs" onChange={handleInputChange} />
+                                    <input required name="name" placeholder="VÍ DỤ: TRỜI ĐÊM ĐÀ LẠT..." className="w-full bg-black/40 px-5 py-4 rounded-[18px] md:rounded-[22px] border border-white/5 outline-none focus:border-blue-500/50 transition-all font-black uppercase text-[10px] md:text-xs" onChange={handleInputChange} />
                                 </div>
 
+                                {/* Giá khởi điểm */}
                                 <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] ml-2 flex items-center gap-2">
-                                        <SuiIcon /> Giá khởi điểm (SUI)
+                                    <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
+                                        <SuiIcon /> Giá (SUI)
                                     </label>
-                                    <input required name="startPrice" type="number" step="0.1" placeholder="0.00" className="w-full bg-black/40 px-6 py-5 rounded-[22px] border border-white/5 outline-none focus:border-blue-500/50 transition-all font-black text-sm text-blue-400" onChange={handleInputChange} />
+                                    <input required name="startPrice" type="number" step="0.1" placeholder="0.00" className="w-full bg-black/40 px-5 py-4 rounded-[18px] md:rounded-[22px] border border-white/5 outline-none focus:border-blue-500/50 transition-all font-black text-sm text-blue-400" onChange={handleInputChange} />
                                 </div>
                             </div>
 
+                            {/* Miêu tả */}
                             <div className="space-y-3">
-                                <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] ml-2 flex items-center gap-2">
+                                <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
                                     <FileText size={12} /> Miêu tả chi tiết
                                 </label>
-                                <textarea required name="description" placeholder="CHIA SẺ CÂU CHUYỆN VÀ MỤC ĐÍCH THIỆN NGUYỆN..." rows="4" className="w-full bg-black/40 p-6 rounded-[30px] border border-white/5 outline-none focus:border-blue-500/50 transition-all text-xs font-bold uppercase leading-relaxed" onChange={handleInputChange} />
+                                <textarea required name="description" placeholder="CHIA SẺ CÂU CHUYỆN..." rows="3" className="w-full bg-black/40 p-5 rounded-[22px] md:rounded-[30px] border border-white/5 outline-none focus:border-blue-500/50 transition-all text-[10px] md:text-xs font-bold uppercase leading-relaxed" onChange={handleInputChange} />
                             </div>
 
+                            {/* Thời gian */}
                             <div className="space-y-3">
-                                <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] ml-2 flex items-center gap-2">
-                                    <Clock size={12} /> Thời hạn đấu giá
+                                <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
+                                    <Clock size={12} /> Thời hạn
                                 </label>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="flex items-center bg-black/40 rounded-[22px] border border-white/5 pr-4 focus-within:border-blue-500/50 transition-all">
-                                        <input required name="hours" type="number" min="0" className="w-full bg-transparent px-6 py-5 outline-none font-black text-xs" placeholder="GIỜ" onChange={handleInputChange} />
-                                        <span className="text-[10px] font-black text-slate-600 uppercase">H</span>
+                                <div className="grid grid-cols-2 gap-3 md:gap-4">
+                                    <div className="flex items-center bg-black/40 rounded-[18px] border border-white/5 pr-4 focus-within:border-blue-500/50">
+                                        <input required name="hours" type="number" className="w-full bg-transparent px-5 py-4 outline-none font-black text-xs" placeholder="GIỜ" onChange={handleInputChange} />
+                                        <span className="text-[9px] font-black text-slate-600">H</span>
                                     </div>
-                                    <div className="flex items-center bg-black/40 rounded-[22px] border border-white/5 pr-4 focus-within:border-blue-500/50 transition-all">
-                                        <input required name="minutes" type="number" min="0" max="59" className="w-full bg-transparent px-6 py-5 outline-none font-black text-xs" placeholder="PHÚT" onChange={handleInputChange} />
-                                        <span className="text-[10px] font-black text-slate-600 uppercase">M</span>
+                                    <div className="flex items-center bg-black/40 rounded-[18px] border border-white/5 pr-4 focus-within:border-blue-500/50">
+                                        <input required name="minutes" type="number" className="w-full bg-transparent px-5 py-4 outline-none font-black text-xs" placeholder="PHÚT" onChange={handleInputChange} />
+                                        <span className="text-[9px] font-black text-slate-600">M</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="pt-4">
+                            {/* Submit Button */}
+                            <div className="pt-2">
                                 <motion.button
-                                    whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     disabled={isProcessing}
-                                    className={`w-full py-8 rounded-[35px] font-black uppercase italic tracking-[0.2em] text-lg transition-all flex items-center justify-center gap-4 ${isProcessing
-                                        ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                                        : 'bg-blue-600 hover:bg-white hover:text-blue-600 text-white shadow-2xl shadow-blue-500/20'
+                                    className={`w-full py-5 md:py-7 rounded-[25px] md:rounded-[35px] font-black uppercase italic tracking-[0.1em] md:tracking-[0.2em] text-sm md:text-lg transition-all flex items-center justify-center gap-3 ${isProcessing
+                                        ? 'bg-slate-800 text-slate-500'
+                                        : 'bg-blue-600 hover:bg-blue-500 text-white shadow-xl shadow-blue-500/20'
                                         }`}
                                 >
-                                    {isProcessing ? <Loader2 className="animate-spin" size={24} /> : <Zap size={24} />}
+                                    {isProcessing ? <Loader2 className="animate-spin" size={20} /> : <Zap size={20} />}
                                     {isProcessing ? "ĐANG XỬ LÝ..." : "BẮT ĐẦU ĐẤU GIÁ"}
                                 </motion.button>
                             </div>
