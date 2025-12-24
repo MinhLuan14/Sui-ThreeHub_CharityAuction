@@ -1,4 +1,4 @@
-module charity_project_v2::charity_auction {
+module charity_project_v3::charity_auction {
     use sui::coin::{Self, Coin};
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
@@ -18,7 +18,7 @@ module charity_project_v2::charity_auction {
     const ESellerCannotBid: u64 = 5;
 
     // --- 2. Địa chỉ ví quỹ cứu trợ ---
-    const CHARITY_WALLET: address = @0x000000000000000000000000000000000000000000000000000000000000cafe;
+    const CHARITY_WALLET: address = @0xaa858ae15196622372566b73b1773118e36331a0b24cc3c9d3356867806ac180;
 
     // --- 3. Cấu trúc dữ liệu ---
     public struct CharityNFT has key, store {

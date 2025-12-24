@@ -12,7 +12,7 @@ import Explore from './pages/Explore';
 import ErrorBoundary from './components/ErrorBoundary';
 import ItemDetail from './pages/ItemDetail';
 import Profile from './pages/Profile';
-export const PACKAGE_ID = "0x01917a9923bd2a7e3cc11fb493a98cf2291703efd1879e5c4b6cf08125fdad08";
+export const PACKAGE_ID = "0x5e4414f266147c07b0b15ded6239606c78333628b4fe251b1dbaa7600c637675";
 const ParticleBackground = () => {
   // Tăng lên 150 hạt để tạo dải ngân hà cực rực rỡ
   const particles = useMemo(() => Array.from({ length: 150 }), []);

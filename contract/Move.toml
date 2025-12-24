@@ -1,5 +1,5 @@
 [package]
-name = "charity_project_v2"
+name = "charity_project_v3"
 version = "0.0.1"
 edition = "2024.beta"
 
@@ -8,4 +8,4 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 
 [addresses]
 # Sửa tên này cho giống với khai báo module trong file .move
-charity_project_v2 = "0x0"
+charity_project_v3 = "0x0"

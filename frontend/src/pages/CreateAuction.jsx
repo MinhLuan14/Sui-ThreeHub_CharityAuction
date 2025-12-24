@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Giữ nguyên JWT và Package ID
 const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI5NjRiZDE0OS1mNTQ4LTRiYzAtODZjOS1kNzJlZjljMTZjZTYiLCJlbWFpbCI6Imx1YW4xNDEwMjAwNWluQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIzODg3MTBkZDcxNTY2ZTRlYzhjMiIsInNjb3BlZEtleVNlY3JldCI6IjE5NTAxMGQ0ZGY5ODY2YjIwMmFlOGExMjFmMDVlNTQ3ZGI3MjA1Mjk4NDVkMjFhMTEwYTFlZjA5MDAwMGE3MDQiLCJleHAiOjE3OTc4NzMyOTB9.J6n9nFxVE1Om2j9F4AVaoglkxL-cVT4cRr90gj0vIag";
-const PACKAGE_ID = "0x01917a9923bd2a7e3cc11fb493a98cf2291703efd1879e5c4b6cf08125fdad08";
+const PACKAGE_ID = "0x5e4414f266147c07b0b15ded6239606c78333628b4fe251b1dbaa7600c637675";
 
 const SuiIcon = () => (
     <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -118,7 +118,7 @@ export default function CreateAuction() {
     };
 
     return (
-        <div className="pt-32 pb-20 min-h-screen bg-[#050810] text-white relative overflow-hidden">
+        <div className="pt-32 pb-20 min-h-screen text-white relative overflow-hidden">
 
             {/* --- COMPONENT THÔNG BÁO CHÍNH GIỮA MÀN HÌNH (MODAL) --- */}
             <AnimatePresence>

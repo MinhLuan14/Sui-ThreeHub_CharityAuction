@@ -1,186 +1,213 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSuiClient, useCurrentAccount } from '@mysten/dapp-kit';
-import { Loader2, Search, Activity, User } from 'lucide-react';
+import { Loader2, Search, Activity, User, LayoutGrid, Sparkles, Gavel } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const PACKAGE_ID = "0x01917a9923bd2a7e3cc11fb493a98cf2291703efd1879e5c4b6cf08125fdad08";
+const PACKAGE_ID = "0x5e4414f266147c07b0b15ded6239606c78333628b4fe251b1dbaa7600c637675";
 
-const IPFS_GATEWAYS = [
-    "https://nftstorage.link/ipfs/",
-    "https://gateway.pinata.cloud/ipfs/",
-    "https://ipfs.io/ipfs/",
-    "https://cloudflare-ipfs.com/ipfs/"
-];
+const getIPFSUrl = (url) => {
+    if (!url || typeof url !== 'string') return "https://placehold.jp/24/0a1120/ffffff/400x400.png?text=No+Image";
+    const parts = url.split('/');
+    const cid = parts[parts.length - 1].trim();
+    return cid ? `https://gateway.pinata.cloud/ipfs/${cid}` : "https://placehold.jp/24/0a1120/ffffff/400x400.png?text=Invalid+CID";
+};
+
+const extractNFTData = (obj) => {
+    const fields = obj.data?.content?.fields;
+    if (!fields) return null;
+    const nft = fields.nft?.fields?.contents?.fields || fields.nft?.fields || fields.nft;
+    const rawImage = nft?.image_url || nft?.url || nft?.metadata || obj.data?.display?.data?.image_url;
+
+    return {
+        id: obj.data.objectId,
+        name: (nft?.name || "Unnamed").split('|')[0].trim(),
+        currentBid: (Number(fields.highest_bid || 0) / 1e9).toFixed(2),
+        image: getIPFSUrl(rawImage),
+        status: fields.status === true ? "LIVE" : "ENDED",
+        seller: fields.seller || fields.creator,
+        highest_bidder: fields.highest_bidder
+    };
+};
 
 export default function Explore() {
     const client = useSuiClient();
-    const account = useCurrentAccount();
+    const currentAccount = useCurrentAccount();
     const [auctions, setAuctions] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    const getCleanCID = (raw) => {
-        if (!raw) return "";
-        let cid = raw.split('ipfs/').pop().replace('ipfs://', '').trim();
-        if (cid.endsWith('/')) cid = cid.slice(0, -1);
-        return cid;
-    };
+    const [filter, setFilter] = useState('all');
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        async function autoDiscoverAuctions() {
+        async function fetchAllAuctions() {
             try {
                 setLoading(true);
                 const events = await client.queryEvents({
                     query: { MoveEventType: `${PACKAGE_ID}::charity_auction::AuctionCreated` }
                 });
-
-                const allIds = events.data.map(event => event.parsedJson.auction_id);
-                if (allIds.length === 0) {
-                    setAuctions([]);
-                    return;
-                }
+                const allAuctionIds = [...new Set(events.data.map((e) => e.parsedJson.auction_id))];
+                if (allAuctionIds.length === 0) { setAuctions([]); return; }
 
                 const response = await client.multiGetObjects({
-                    ids: allIds,
-                    options: { showContent: true, showOwner: true }
+                    ids: allAuctionIds,
+                    options: { showContent: true, showDisplay: true }
                 });
 
-                const mappedData = response.map(obj => {
-                    const fields = obj.data?.content?.fields;
-                    if (!fields) return null;
-                    const nftFields = fields.nft?.fields;
-
-                    return {
-                        id: obj.data.objectId,
-                        creator: fields.creator,
-                        name: (nftFields?.name || "NFT").split(' | ')[0],
-                        cid: getCleanCID(nftFields?.metadata || ""),
-                        price: (Number(fields.highest_bid || 0) / 1000000000).toFixed(2),
-                        status: fields.status
-                    };
-                }).filter(item => item !== null && item.status === true);
+                const mappedData = response
+                    .map(obj => extractNFTData(obj))
+                    .filter(item => item !== null && item.status === "LIVE");
 
                 setAuctions(mappedData);
             } catch (err) {
-                setError(err.message);
+                console.error("Explore Sync Error:", err);
             } finally {
                 setLoading(false);
             }
         }
-        autoDiscoverAuctions();
+        fetchAllAuctions();
     }, [client]);
 
-    const handleImageError = (e, cid) => {
-        const currentSrc = e.target.src;
-        let nextIndex = 0;
-        for (let i = 0; i < IPFS_GATEWAYS.length; i++) {
-            if (currentSrc.includes(IPFS_GATEWAYS[i])) {
-                nextIndex = i + 1;
-                break;
-            }
+    const filteredAuctions = useMemo(() => {
+        let result = [...auctions];
+        if (filter === 'mine' && currentAccount?.address) {
+            result = result.filter(item => item.seller === currentAccount.address);
         }
-        if (nextIndex < IPFS_GATEWAYS.length) {
-            e.target.src = `${IPFS_GATEWAYS[nextIndex]}${cid}`;
-        } else {
-            e.target.src = "https://placehold.co/400x400/0a1120/ffffff?text=Image+Error";
-            e.target.onerror = null;
+        if (searchQuery.trim() !== "") {
+            const term = searchQuery.toLowerCase().trim();
+            result = result.filter(item => item.name.toLowerCase().includes(term));
         }
-    };
+        return result;
+    }, [auctions, filter, currentAccount?.address, searchQuery]);
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-[#050B18]">
-            <div className="relative">
-                <div className="absolute -inset-4 bg-sui-cyan/20 blur-xl rounded-full animate-pulse" />
-                <Loader2 className="animate-spin text-sui-cyan relative z-10" size={48} />
-            </div>
+            <Loader2 className="animate-spin text-sui-cyan" size={40} />
         </div>
     );
 
     return (
-        <div className="pt-32 pb-20 max-w-7xl mx-auto px-10 text-white min-h-screen bg-[#050B18]">
-            {/* TIÊU ĐỀ SECTION */}
-            <div className="mb-16 relative">
-                <h1 className="text-6xl font-black italic uppercase tracking-tighter">
-                    Khám phá <span className="text-sui-cyan drop-shadow-[0_0_15px_rgba(0,209,255,0.5)]">Đấu giá</span>
-                </h1>
-                <div className="flex items-center gap-3 mt-3">
-                    <span className="flex items-center gap-1.5 text-sui-cyan text-[10px] font-black uppercase tracking-[0.3em]">
-                        <Activity size={12} className="animate-pulse" /> Live on Sui
-                    </span>
-                    <div className="h-px w-20 bg-white/10" />
-                    <p className="text-white/30 font-bold uppercase text-[9px] tracking-[0.2em]">Real-time Impact Protocol</p>
-                </div>
+        /* 1. BACKGROUND TOÀN TRANG: Đã chỉnh pt-24 (khoảng 100px) và pb-28 (khoảng 120px) */
+        <div className="pt-24 pb-28 min-h-screen  text-white relative overflow-hidden">
+
+            {/* Hiệu ứng ánh sáng trang trí phía sau (Hạt sáng mờ) */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-sui-cyan/5 blur-[120px] rounded-full" />
+                <div className="absolute bottom-0 left-[-5%] w-[400px] h-[400px] bg-sui-cyan/5 blur-[100px] rounded-full" />
             </div>
 
-            {auctions.length === 0 ? (
-                <div className="text-center py-32 bg-white/5 border border-white/5 rounded-5xl backdrop-blur-3xl">
-                    <Search className="mx-auto text-white/10 mb-6" size={64} />
-                    <p className="text-white/40 font-black uppercase italic tracking-[0.2em] text-xl">
-                        Không có phiên đấu giá nào
-                    </p>
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+
+                {/* HEADER */}
+                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                    <div>
+                        <h1 className="text-6xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">
+                            Explore <span className="text-sui-cyan drop-shadow-[0_0_15px_rgba(0,247,255,0.4)]">Market</span>
+                        </h1>
+                        <div className="flex items-center gap-3 mt-4 text-white/30 font-bold uppercase text-[10px] tracking-[0.3em]">
+                            <Activity size={14} className="text-sui-cyan animate-pulse" /> Live Auctions
+                        </div>
+                    </div>
+
+                    <div className="relative w-full md:w-96 group">
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-sui-cyan transition-colors" size={18} />
+                        <input
+                            type="text"
+                            placeholder="TÌM KIẾM..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 outline-none focus:border-sui-cyan/50 focus:bg-white/10 font-black text-[10px] tracking-widest uppercase transition-all backdrop-blur-md"
+                        />
+                    </div>
                 </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {auctions.map((item) => {
-                        const isMyProduct = account?.address === item.creator;
 
-                        return (
-                            <div key={item.id} className="glass-card p-5 rounded-5xl border border-white/5 hover:border-sui-cyan/40 transition-all duration-500 group relative overflow-hidden bg-[#0A1120]">
-                                {/* ẢNH NFT */}
-                                <div className="relative aspect-square rounded-4xl overflow-hidden mb-6 bg-slate-900 border border-white/5">
-                                    {isMyProduct && (
-                                        <div className="absolute top-4 right-4 z-20 bg-sui-cyan text-sui-dark text-[9px] font-black uppercase px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-xl border border-sui-dark/20">
-                                            <User size={10} fill="currentColor" />
-                                            Của bạn
-                                        </div>
-                                    )}
-
-                                    <img
-                                        src={`${IPFS_GATEWAYS[0]}${item.cid}`}
-                                        alt={item.name}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                        onError={(e) => handleImageError(e, item.cid)}
-                                    />
-
-                                    <div className="absolute bottom-4 left-4 bg-sui-dark/80 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-[8px] font-black text-sui-cyan uppercase tracking-widest italic flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Activity size={10} className="animate-pulse" />
-                                        Bidding Live
-                                    </div>
-                                </div>
-
-                                {/* THÔNG TIN */}
-                                <div className="px-2">
-                                    <h3 className="text-xl font-black italic text-white uppercase mb-1 truncate leading-tight group-hover:text-sui-cyan transition-colors">
-                                        {item.name}
-                                    </h3>
-                                    <p className="text-[10px] text-white/30 font-black uppercase tracking-widest mb-5">
-                                        Sui Charity Art
-                                    </p>
-
-                                    <div className="flex justify-between items-center bg-white/5 rounded-3xl p-4 border border-white/5 group-hover:bg-sui-cyan/10 transition-all">
-                                        <div>
-                                            <p className="text-[8px] text-white/40 font-black uppercase tracking-widest mb-1">Giá hiện tại</p>
-                                            <p className="text-xl font-black text-sui-cyan italic tracking-tighter leading-none">
-                                                {item.price} <span className="text-[10px] text-white/40">SUI</span>
-                                            </p>
-                                        </div>
-
-                                        <Link
-                                            to={`/item/${item.id}`}
-                                            className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase transition-all shadow-lg ${isMyProduct
-                                                ? 'bg-white/10 text-white/40 cursor-not-allowed border border-white/10'
-                                                : 'bg-sui-cyan text-sui-dark hover:scale-105 active:scale-95 shadow-sui-cyan/20'
-                                                }`}
-                                        >
-                                            {isMyProduct ? 'Của bạn' : 'Đấu giá'}
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
+                {/* FILTERS */}
+                <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 w-fit mb-16 backdrop-blur-md">
+                    <button
+                        onClick={() => setFilter('all')}
+                        className={`flex items-center gap-2 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === 'all' ? 'bg-sui-cyan text-black shadow-lg shadow-sui-cyan/40' : 'text-white/40 hover:text-white'}`}
+                    >
+                        <LayoutGrid size={14} /> Tất cả
+                    </button>
+                    <button
+                        onClick={() => setFilter('mine')}
+                        disabled={!currentAccount}
+                        className={`flex items-center gap-2 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === 'mine' ? 'bg-sui-cyan text-black shadow-lg shadow-sui-cyan/40' : 'text-white/40 hover:text-white disabled:opacity-20'}`}
+                    >
+                        <User size={14} /> Của tôi
+                    </button>
                 </div>
-            )}
+
+                {/* GRID SẢN PHẨM */}
+                {filteredAuctions.length === 0 ? (
+                    <div className="text-center py-40 bg-white/2 border border-white/5 rounded-[60px]">
+                        <Search className="mx-auto text-white/5 mb-6" size={60} />
+                        <p className="text-white/20 font-black uppercase tracking-widest">Không có sản phẩm</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                        <AnimatePresence mode='popLayout'>
+                            {filteredAuctions.map((item) => {
+                                const isMine = currentAccount?.address && item.seller === currentAccount.address;
+
+                                return (
+                                    <motion.div
+                                        layout
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.9 }}
+                                        key={item.id}
+                                        /* BACKGROUND THẺ CARD: Trong suốt hơn để không bị nặng nề */
+                                        className="group bg-[#0A1120]/80 border border-white/5 rounded-[50px] p-7 transition-all duration-500 relative hover:border-sui-cyan/60 hover:shadow-[0_0_50px_rgba(0,247,255,0.2)] hover:-translate-y-2 backdrop-blur-sm"
+                                    >
+                                        {/* THUMBNAIL CAO (aspect-[4/5]) */}
+                                        <div className="relative aspect-[4/5] rounded-[40px] overflow-hidden mb-8 bg-black shadow-2xl border border-white/5">
+                                            {isMine && (
+                                                <div className="absolute top-5 left-5 z-20 bg-sui-cyan text-black text-[8px] font-black uppercase px-4 py-2 rounded-full flex items-center gap-2 shadow-2xl">
+                                                    <Sparkles size={12} /> Của bạn
+                                                </div>
+                                            )}
+                                            <img
+                                                src={item.image}
+                                                alt={item.name}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
+                                                onError={(e) => { e.target.src = "https://placehold.jp/24/0a1120/ffffff/600x600.png?text=Error"; }}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-sui-cyan/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                        </div>
+
+                                        <div className="px-2">
+                                            <h3 className="text-2xl font-black italic text-white uppercase truncate mb-8 group-hover:text-sui-cyan transition-colors duration-300">
+                                                {item.name}
+                                            </h3>
+
+                                            {/* PHẦN GIÁ & NÚT: Đã dọn dẹp background bên dưới hoàn toàn sạch sẽ */}
+                                            <div className="flex items-center justify-between bg-transparent">
+                                                <div>
+                                                    <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">Highest Bid</p>
+                                                    <div className="flex items-baseline gap-1">
+                                                        <p className="text-3xl font-black italic text-sui-cyan tracking-tighter drop-shadow-[0_0_10px_rgba(0,247,255,0.4)]">
+                                                            {item.currentBid}
+                                                        </p>
+                                                        <span className="text-[10px] font-bold text-white/40">SUI</span>
+                                                    </div>
+                                                </div>
+
+                                                <Link
+                                                    to={`/item/${item.id}`}
+                                                    className="h-14 px-8 bg-sui-cyan rounded-full flex items-center justify-center gap-2 text-[#050B18] text-[12px] font-black uppercase italic tracking-tighter transition-all duration-300 hover:bg-white hover:shadow-[0_0_30px_rgba(0,247,255,0.6)] active:scale-95 group/btn"
+                                                >
+                                                    Đấu giá
+                                                    <Gavel size={16} strokeWidth={3} className="group-hover/btn:rotate-12 transition-transform" />
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </AnimatePresence>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

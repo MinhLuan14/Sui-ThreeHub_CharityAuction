@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, Loader2, Wallet, ChevronRight, Trophy, Tag, Activity, Sparkles, ImageOff, History } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const PACKAGE_ID = "0x01917a9923bd2a7e3cc11fb493a98cf2291703efd1879e5c4b6cf08125fdad08";
+const PACKAGE_ID = "0x5e4414f266147c07b0b15ded6239606c78333628b4fe251b1dbaa7600c637675";
 
 const IPFS_GATEWAYS = [
     "https://ipfs.io/ipfs/",
@@ -258,7 +258,7 @@ export default function ItemDetails() {
     );
 
     return (
-        <div className="min-h-screen bg-[#050810] text-white pt-32 pb-20 px-4">
+        <div className="min-h-screen  text-white pt-32 pb-20 px-4">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
 
                 {/* TRÁI: Media & Chi tiết */}
