@@ -113,14 +113,46 @@ export default function Header({ scrolled }) {
   return (
     <nav className={`fixed top-0 w-full z-[9999] transition-all duration-300 ${scrolled ? 'bg-[#050B18]/90 backdrop-blur-xl border-b border-white/5 py-3' : 'bg-transparent py-5'
       }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+
+      {/* --- NÂNG CẤP: CÁC NÉT CHẠY NGANG (FLOWING LINES) --- */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+        {[
+          { top: '10%', duration: 3, delay: 0, opacity: 0.2 },
+          { top: '50%', duration: 5, delay: 1, opacity: 0.1 },
+          { top: '85%', duration: 4, delay: 2, opacity: 0.15 },
+        ].map((line, i) => (
+          <motion.div
+            key={i}
+            initial={{ x: '-100%' }}
+            animate={{ x: '200%' }}
+            transition={{
+              duration: line.duration,
+              repeat: Infinity,
+              ease: "linear",
+              delay: line.delay
+            }}
+            className="absolute h-[1px] w-[40%] bg-gradient-to-r from-transparent via-[#00D1FF] to-transparent"
+            style={{ top: line.top, opacity: line.opacity }}
+          />
+        ))}
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center relative z-10">
 
         {/* LOGO */}
-        <Link to="/" className="flex flex-col relative z-10">
+        <Link to="/" className="flex flex-col relative group">
           <span className="text-xl md:text-2xl font-black italic tracking-tighter text-white">
-            SUI<span className="text-[#00D1FF] drop-shadow-[0_0_10px_#00D1FF]">CHARITY</span>
+            SUI<span className="text-[#00D1FF] drop-shadow-[0_0_10px_#00D1FF] transition-all group-hover:drop-shadow-[0_0_20px_#00D1FF]">CHARITY</span>
           </span>
-          <span className="text-[8px] font-bold text-white/30 tracking-[0.3em] uppercase">Impact Protocol</span>
+          <div className="flex items-center gap-1">
+            <span className="text-[8px] font-bold text-white/30 tracking-[0.3em] uppercase">Impact Protocol</span>
+            {/* Nét gạch nhỏ chạy dưới chữ Impact Protocol */}
+            <motion.div
+              animate={{ width: ['0%', '100%', '0%'], left: ['0%', '0%', '100%'] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="h-[1px] bg-[#00D1FF]/50 absolute -bottom-1 w-full"
+            />
+          </div>
         </Link>
 
         {/* DESKTOP NAV */}
