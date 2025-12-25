@@ -9,7 +9,7 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import CreateAuction from './pages/CreateAuction';
 import Explore from './pages/Explore';
-import ErrorBoundary from './components/ErrorBoundary';
+import AIChatBot from './components/AIChatbot';
 import ItemDetail from './pages/ItemDetail';
 import Profile from './pages/Profile';
 export const PACKAGE_ID = "0x5e4414f266147c07b0b15ded6239606c78333628b4fe251b1dbaa7600c637675";
@@ -86,7 +86,7 @@ function App() {
           </Routes>
         </AnimatePresence>
       </main>
-
+      <AIChatBot />
       {/* THREEHUB LOGO FIXED */}
       <div className="fixed bottom-10 right-10 z-100 pointer-events-none">
         <div className="pointer-events-auto relative p-px rounded-2xl overflow-hidden group shadow-[0_0_40px_rgba(6,182,212,0.2)]">

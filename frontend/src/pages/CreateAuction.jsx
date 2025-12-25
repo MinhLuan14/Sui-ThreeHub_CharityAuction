@@ -25,7 +25,7 @@ export default function CreateAuction() {
     const client = useSuiClient();
     const { mutate: signAndExecute } = useSignAndExecuteTransaction();
     const navigate = useNavigate();
-
+    const [isAiLoading, setIsAiLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [preview, setPreview] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -41,7 +41,43 @@ export default function CreateAuction() {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
+    const handleAiGenerate = async () => {
+        // Kiểm tra nếu chưa nhập tên thì không gọi AI
+        if (!formData.name) {
+            return toast.error("Vui lòng nhập tên vật phẩm để AI có dữ liệu viết bài!");
+        }
 
+        setIsAiLoading(true);
+        try {
+            const response = await fetch('http://localhost:5000/api/generate-description', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    itemName: formData.name,
+                    story: "Vật phẩm này được đóng góp để ủng hộ quỹ thiện nguyện mổ tim cho trẻ em.",
+                    cause: "Gây quỹ phẫu thuật tim",
+                    donorName: account?.address ? `Nhà hảo tâm (${account.address.slice(0, 6)}...)` : "Một nhà hảo tâm ẩn danh"
+                })
+            });
+
+            if (!response.ok) throw new Error("Server AI không phản hồi");
+
+            const data = await response.json();
+
+            // Cập nhật mô tả vào form
+            if (data.description) {
+                setFormData(prev => ({ ...prev, description: data.description }));
+                toast.success("AI đã soạn xong mô tả nhân văn cho bạn! 💙");
+            }
+        } catch (err) {
+            console.error("AI Error:", err);
+            toast.error("Không thể kết nối với server AI. Hãy chắc chắn bạn đã chạy Backend!");
+        } finally {
+            setIsAiLoading(false);
+        }
+    };
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -172,31 +208,89 @@ export default function CreateAuction() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
                     {/* LEFT: MEDIA UPLOAD AREA */}
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="lg:col-span-5 w-full">
-                        <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-[35px] md:rounded-[45px] blur opacity-10 group-hover:opacity-30 transition duration-700" />
-                            <div className="relative bg-[#0A1120] border border-white/10 rounded-[30px] md:rounded-[40px] p-2 md:p-4 min-h-[350px] md:min-h-[500px] flex flex-col items-center justify-center overflow-hidden shadow-2xl">
-                                <AnimatePresence mode='wait'>
-                                    {preview ? (
-                                        <motion.div key="preview" className="relative w-full h-full flex flex-col items-center">
-                                            <img src={preview} className="w-full aspect-square object-cover rounded-[25px] md:rounded-[32px]" alt="Preview" />
-                                            <button onClick={() => { setPreview(null); setSelectedFile(null); }} className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-full hover:bg-red-500 transition-colors">
-                                                <X size={18} />
-                                            </button>
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div key="upload" className="text-center p-6 md:p-10 space-y-4">
-                                            <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-500/5 rounded-full flex items-center justify-center mx-auto border border-blue-500/20">
-                                                <Upload className="text-blue-500 animate-bounce" size={24} />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <h3 className="text-lg font-black italic uppercase">Tải lên tác phẩm</h3>
-                                                <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">JPG, PNG, GIF (Max 10MB)</p>
-                                            </div>
-                                            <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleImageChange} />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="lg:col-span-5 w-full h-full">
+                        <div className="relative group h-full">
+                            {/* Lớp nền phát sáng khi hover */}
+                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-[40px] md:rounded-[50px] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+
+                            {/* Khung chứa chính */}
+                            <div className="relative bg-[#050B18] border border-white/10 rounded-[35px] md:rounded-[45px] p-2 md:p-3 min-h-[550px] md:min-h-[650px] flex flex-col items-center justify-center overflow-hidden shadow-2xl">
+
+                                {/* Nội dung bên trong khung */}
+                                <div className="w-full h-full border-2 border-dashed border-white/5 rounded-[30px] md:rounded-[40px] flex items-center justify-center relative bg-[#0A1120]/50">
+
+                                    <AnimatePresence mode='wait'>
+                                        {preview ? (
+                                            <motion.div
+                                                key="preview"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="relative w-full h-full p-2 flex items-center justify-center"
+                                            >
+                                                {/* Ảnh chính với bo góc và shadow nội bộ */}
+                                                <img
+                                                    src={preview}
+                                                    className="max-w-full max-h-[580px] md:max-h-[600px] object-contain rounded-[25px] md:rounded-[35px] shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10"
+                                                    alt="Preview"
+                                                />
+
+                                                {/* Nút xóa ảnh tối ưu lại */}
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1, backgroundColor: '#ef4444' }}
+                                                    whileTap={{ scale: 0.9 }}
+                                                    onClick={() => { setPreview(null); setSelectedFile(null); }}
+                                                    className="absolute top-6 right-6 p-3 bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl text-white shadow-xl transition-colors z-30"
+                                                >
+                                                    <X size={20} />
+                                                </motion.button>
+
+                                                {/* Overlay thông tin nhẹ khi có ảnh */}
+                                                <div className="absolute bottom-6 left-6 right-6 pointer-events-none">
+                                                    <div className="bg-black/20 backdrop-blur-sm border border-white/5 rounded-2xl px-4 py-2 inline-flex items-center gap-2">
+                                                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                                                        <span className="text-[9px] font-black uppercase tracking-widest text-white/70">Ready to Mint</span>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        ) : (
+                                            <motion.div
+                                                key="upload"
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="text-center p-8 space-y-6 flex flex-col items-center justify-center w-full"
+                                            >
+                                                {/* Icon Upload với hiệu ứng tầng lớp */}
+                                                <div className="relative group/icon">
+                                                    <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full group-hover/icon:bg-blue-500/40 transition-all duration-500" />
+                                                    <div className="w-20 h-20 md:w-28 md:h-28 bg-gradient-to-b from-blue-500/10 to-transparent border border-blue-500/20 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-center relative z-10 transition-transform duration-500 group-hover/icon:-translate-y-2">
+                                                        <Upload className="text-blue-500" size={40} />
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-3 relative z-10">
+                                                    <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter">
+                                                        Nạp <span className="text-blue-500 text-glow">Art Work</span>
+                                                    </h3>
+                                                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] max-w-[200px] mx-auto leading-relaxed">
+                                                        Hỗ trợ các định dạng hình ảnh chất lượng cao
+                                                    </p>
+                                                </div>
+
+                                                <div className="relative z-10 px-6 py-3 bg-blue-500 text-white rounded-2xl shadow-lg shadow-blue-500/20">
+                                                    <span className="text-[10px] font-black uppercase italic tracking-widest">Chọn tệp ngay</span>
+                                                </div>
+
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="absolute inset-0 opacity-0 cursor-pointer z-20"
+                                                    onChange={handleImageChange}
+                                                />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             </div>
                         </div>
                     </motion.div>
@@ -219,18 +313,47 @@ export default function CreateAuction() {
                                     <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
                                         <SuiIcon /> Giá (SUI)
                                     </label>
+
                                     <input required name="startPrice" type="number" step="0.1" placeholder="0.00" className="w-full bg-black/40 px-5 py-4 rounded-[18px] md:rounded-[22px] border border-white/5 outline-none focus:border-blue-500/50 transition-all font-black text-sm text-blue-400" onChange={handleInputChange} />
                                 </div>
                             </div>
 
                             {/* Miêu tả */}
                             <div className="space-y-3">
-                                <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                    <FileText size={12} /> Miêu tả chi tiết
-                                </label>
-                                <textarea required name="description" placeholder="CHIA SẺ CÂU CHUYỆN..." rows="3" className="w-full bg-black/40 p-5 rounded-[22px] md:rounded-[30px] border border-white/5 outline-none focus:border-blue-500/50 transition-all text-[10px] md:text-xs font-bold uppercase leading-relaxed" onChange={handleInputChange} />
-                            </div>
+                                {/* Hàng tiêu đề: Nhãn bên trái, Nút bên phải */}
+                                <div className="flex justify-between items-center px-1">
+                                    <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                        <FileText size={12} /> Miêu tả chi tiết
+                                    </label>
 
+                                    <motion.button
+                                        type="button"
+                                        onClick={handleAiGenerate}
+                                        disabled={isAiLoading || !formData.name}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 border border-blue-500/30 rounded-full text-[8px] font-black text-blue-400 hover:bg-blue-500 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed uppercase tracking-tighter"
+                                    >
+                                        {isAiLoading ? (
+                                            <Loader2 className="animate-spin" size={10} />
+                                        ) : (
+                                            <Sparkles size={10} />
+                                        )}
+                                        {isAiLoading ? "Đang soạn..." : "✨ AI Viết"}
+                                    </motion.button>
+                                </div>
+
+                                {/* Ô nhập liệu bên dưới */}
+                                <textarea
+                                    required
+                                    name="description"
+                                    value={formData.description} // Đừng quên thêm value để AI điền chữ vào được
+                                    placeholder="CHIA SẺ CÂU CHUYỆN..."
+                                    rows="3"
+                                    className="w-full bg-black/40 p-5 rounded-[22px] md:rounded-[30px] border border-white/5 outline-none focus:border-blue-500/50 transition-all text-[10px] md:text-xs font-bold uppercase leading-relaxed"
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                             {/* Thời gian */}
                             <div className="space-y-3">
                                 <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
