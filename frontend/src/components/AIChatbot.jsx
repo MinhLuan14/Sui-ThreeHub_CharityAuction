@@ -28,7 +28,7 @@ export default function AIChatBot({ onAiGenerate, productContext }) {
     // --- HÀM XỬ LÝ CHUNG CHO AI ---
     const askAI = async (prompt, type = 'chat') => {
         try {
-            const response = await fetch('http://localhost:5000/api/chat', {
+            const response = await fetch('https://sui-threehub-charityauction.onrender.com/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -131,8 +131,8 @@ export default function AIChatBot({ onAiGenerate, productContext }) {
                                             className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                         >
                                             <div className={`max-w-[85%] p-4 rounded-2xl text-[12px] leading-relaxed shadow-sm ${m.role === 'user'
-                                                    ? 'bg-cyan-600 text-white rounded-tr-none'
-                                                    : 'bg-white/5 text-slate-200 border border-white/10 rounded-tl-none'
+                                                ? 'bg-cyan-600 text-white rounded-tr-none'
+                                                : 'bg-white/5 text-slate-200 border border-white/10 rounded-tl-none'
                                                 }`}>
                                                 {m.content}
                                             </div>
