@@ -28,6 +28,7 @@ export default function AIChatBot({ onAiGenerate, productContext }) {
     // --- HÀM XỬ LÝ CHUNG CHO AI ---
     const askAI = async (prompt, type = 'chat') => {
         try {
+            // nếu chạy local đổi lệnh const response = await fetch('http://localhost:5000/api/chat', { ... });
             const response = await fetch('https://sui-threehub-charityauction.onrender.com/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

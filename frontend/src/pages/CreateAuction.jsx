@@ -40,7 +40,7 @@ export default function CreateAuction() {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-    };
+    };/*
     const handleAiGenerate = async () => {
         // Kiểm tra nếu chưa nhập tên thì không gọi AI
         if (!formData.name) {
@@ -74,6 +74,53 @@ export default function CreateAuction() {
         } catch (err) {
             console.error("AI Error:", err);
             toast.error("Không thể kết nối với server AI. Hãy chắc chắn bạn đã chạy Backend!");
+        } finally {
+            setIsAiLoading(false);
+        }
+    }; Chạy local*/
+    const handleAiGenerate = async () => {
+        // Kiểm tra nếu chưa nhập tên thì không gọi AI
+        if (!formData.name) {
+            return toast.error("Vui lòng nhập tên vật phẩm để AI có dữ liệu viết bài!");
+        }
+
+        setIsAiLoading(true);
+
+        // TỰ ĐỘNG NHẬN DIỆN ĐỊA CHỈ BACKEND
+        // Nếu bạn đang mở web ở localhost thì dùng cổng 5000, 
+        // nếu đã đưa lên web thì dùng link Render.
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : 'https://sui-threehub-charityauction.onrender.com';
+
+        try {
+            // Sử dụng API_BASE_URL đã định nghĩa ở trên
+            const response = await fetch(`${API_BASE_URL}/api/generate-description`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    itemName: formData.name,
+                    story: formData.description || "Vật phẩm này được đóng góp để ủng hộ quỹ thiện nguyện mổ tim cho trẻ em.",
+                    cause: "Gây quỹ phẫu thuật tim",
+                    donorName: account?.address ? `Nhà hảo tâm (${account.address.slice(0, 6)}...)` : "Một nhà hảo tâm ẩn danh"
+                })
+            });
+
+            if (!response.ok) throw new Error("Server AI không phản hồi");
+
+            const data = await response.json();
+
+            // Cập nhật mô tả vào form
+            if (data.description) {
+                setFormData(prev => ({ ...prev, description: data.description }));
+                toast.success("AI đã soạn xong mô tả nhân văn cho bạn! 💙");
+            }
+        } catch (err) {
+            console.error("AI Error:", err);
+            // Cập nhật câu thông báo lỗi cho chuyên nghiệp hơn
+            toast.error("AI đang bận hoặc server chưa khởi động xong. Vui lòng thử lại sau 30 giây! 💙");
         } finally {
             setIsAiLoading(false);
         }
