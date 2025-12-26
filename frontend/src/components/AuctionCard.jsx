@@ -49,7 +49,7 @@ export default function AuctionCard({ nft }) {
 
         <div className="flex justify-between items-center bg-white/5 rounded-3xl p-4 border border-white/5 group-hover:bg-sui-cyan/10 transition-all">
           <div>
-            <p className="text-[8px] text-white/40 font-black uppercase tracking-widest mb-1">Giá hiện tại</p>
+            <p className="text-[8px] text-white/40 font-black uppercase tracking-widest mb-1">Current Price</p>
             <p className="text-xl font-black text-sui-cyan italic tracking-tighter">
               {nft.price} <span className="text-[10px] text-white/40">SUI</span>
             </p>

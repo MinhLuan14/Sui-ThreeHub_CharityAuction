@@ -110,7 +110,7 @@ export default function Explore() {
                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#00D1FF] transition-colors" size={18} />
                         <input
                             type="text"
-                            placeholder="TÌM KIẾM..."
+                            placeholder="SEARCH..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 outline-none focus:border-[#00D1FF]/50 focus:bg-white/10 font-black text-[10px] tracking-widest uppercase transition-all backdrop-blur-md"
@@ -124,14 +124,14 @@ export default function Explore() {
                         onClick={() => setFilter('all')}
                         className={`flex items-center gap-2 px-6 md:px-8 py-3 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${filter === 'all' ? 'bg-[#00D1FF] text-black shadow-lg shadow-[#00D1FF]/40' : 'text-white/40 hover:text-white'}`}
                     >
-                        <LayoutGrid size={14} /> Tất cả
+                        <LayoutGrid size={14} /> View All
                     </button>
                     <button
                         onClick={() => setFilter('mine')}
                         disabled={!currentAccount}
                         className={`flex items-center gap-2 px-6 md:px-8 py-3 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${filter === 'mine' ? 'bg-[#00D1FF] text-black shadow-lg shadow-[#00D1FF]/40' : 'text-white/40 hover:text-white disabled:opacity-20'}`}
                     >
-                        <User size={14} /> Của tôi
+                        <User size={14} /> My Collection
                     </button>
                 </div>
 
@@ -160,7 +160,7 @@ export default function Explore() {
                                         <div className="relative aspect-[4/5] rounded-[30px] md:rounded-[40px] overflow-hidden mb-6 md:mb-8 bg-black shadow-2xl border border-white/5">
                                             {isMine && (
                                                 <div className="absolute top-4 left-4 z-20 bg-[#00D1FF] text-black text-[7px] md:text-[8px] font-black uppercase px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-2 shadow-2xl">
-                                                    <Sparkles size={12} /> Của bạn
+                                                    <Sparkles size={12} /> Your Items
                                                 </div>
                                             )}
                                             <img
@@ -194,7 +194,7 @@ export default function Explore() {
                                                     to={`/item/${item.id}`}
                                                     className="w-full sm:w-auto h-12 md:h-14 px-6 md:px-8 bg-[#00D1FF] rounded-full flex items-center justify-center gap-2 text-[#050B18] text-[10px] md:text-[12px] font-black uppercase italic tracking-tighter transition-all duration-300 hover:bg-white hover:shadow-[0_0_30px_rgba(0,247,255,0.5)] active:scale-95 group/btn"
                                                 >
-                                                    Đấu giá
+                                                    BID
                                                     <Gavel size={16} strokeWidth={3} className="group-hover/btn:rotate-12 transition-transform" />
                                                 </Link>
                                             </div>

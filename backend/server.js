@@ -92,7 +92,7 @@ app.post('/api/chat', async (req, res) => {
         if (type === 'generate_description') {
             // Tự động chuyển hướng xử lý sang logic viết mô tả
             const completion = await groq.chat.completions.create({
-                messages: [{ role: "system", content: "Bạn là chuyên gia viết mô tả NFT thiện nguyện." }, { role: "user", content: `Viết mô tả cho: ${message}` }],
+                messages: [{ role: "system", content: "You are an expert in writing descriptions for charity NFTs." }, { role: "user", content: `Write a description for: ${message}` }],
                 model: "llama-3.3-70b-versatile",
             });
             return res.json({ reply: completion.choices[0].message.content });

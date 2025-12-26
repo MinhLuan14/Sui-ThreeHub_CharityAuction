@@ -60,25 +60,25 @@ export default function AIChatBot({ onAiGenerate, productContext }) {
         if (reply) {
             setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
         } else {
-            setMessages(prev => [...prev, { role: 'assistant', content: 'Hệ thống đang bảo trì, thử lại sau nhé!' }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: 'The system is under maintenance. Please try again later!' }]);
         }
         setIsLoading(false);
     };
 
     // Lệnh AI Viết Hộ (Có thể gọi từ bên ngoài thông qua Ref hoặc Props)
     const handleTriggerAiWriter = async () => {
-        if (!productContext?.name) return "Vui lòng nhập tên vật phẩm trước!";
+        if (!productContext?.name) return "Item name is required!";
 
         setIsLoading(true);
         setIsOpen(true); // Mở khung chat để người dùng thấy quá trình
 
-        const prompt = `Viết một đoạn mô tả ngắn, hấp dẫn cho NFT có tên: ${productContext.name}`;
-        setMessages(prev => [...prev, { role: 'user', content: `✨ Viết hộ tôi mô tả cho: ${productContext.name}` }]);
+        const prompt = `Write a short, engaging description for the NFT named: ${productContext.name}`;
+        setMessages(prev => [...prev, { role: 'user', content: `✨ Please write a description for: ${productContext.name}` }]);
 
         const aiText = await askAI(prompt, 'generate_description');
 
         if (aiText) {
-            setMessages(prev => [...prev, { role: 'assistant', content: 'Xong rồi! Tôi đã điền mô tả vào form cho bạn.' }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: 'Done! I’ve filled in the description for you.' }]);
             onAiGenerate(aiText); // Truyền dữ liệu ngược lại cho Form chính
         }
         setIsLoading(false);
@@ -141,7 +141,7 @@ export default function AIChatBot({ onAiGenerate, productContext }) {
                                     ))}
                                     {isLoading && (
                                         <div className="flex items-center gap-2 text-cyan-500 text-[10px] font-bold uppercase tracking-widest animate-pulse">
-                                            <Loader2 size={12} className="animate-spin" /> Hệ thống đang xử lý...
+                                            <Loader2 size={12} className="animate-spin" /> The system is processing…
                                         </div>
                                     )}
                                     <div ref={messagesEndRef} />
@@ -178,7 +178,7 @@ export default function AIChatBot({ onAiGenerate, productContext }) {
                                 whileHover={{ opacity: 1, y: 0 }}
                                 className="bg-cyan-500 text-white text-[9px] font-black px-3 py-1.5 rounded-full mb-3 shadow-lg pointer-events-none uppercase tracking-tighter"
                             >
-                                Trợ lý AI đang sẵn sàng!
+                                The AI assistant is ready!
                             </motion.div>
                             <motion.div
                                 whileHover={{ scale: 1.1 }}

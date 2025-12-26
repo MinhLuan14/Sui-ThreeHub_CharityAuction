@@ -29,10 +29,10 @@ export default function Header({ scrolled }) {
   }, [notifications]);
 
   const navLinks = [
-    { path: '/', label: 'Trang chủ', icon: <Home size={14} /> },
-    { path: '/explore', label: 'Đấu giá', icon: <LayoutGrid size={14} /> },
-    { path: '/create', label: 'Đăng bán', icon: <Upload size={14} /> },
-    { path: '/profile', label: 'Cá nhân', icon: <User size={14} /> },
+    { path: '/', label: 'HOME', icon: <Home size={14} /> },
+    { path: '/explore', label: 'AUCTION', icon: <LayoutGrid size={14} /> },
+    { path: '/create', label: 'SELL', icon: <Upload size={14} /> },
+    { path: '/profile', label: 'PROFILE', icon: <User size={14} /> },
   ];
 
   // 2. Logic theo dõi số dư
@@ -51,7 +51,7 @@ export default function Header({ scrolled }) {
             id: `bal-${Date.now()}`,
             amount: Math.abs(diff).toFixed(4),
             isUp: isIncrease,
-            title: isIncrease ? "VÍ ĐÃ NHẬN TIỀN" : "VÍ ĐÃ CHI TIỀN",
+            title: isIncrease ? "Wallet Credited" : "Wallet Debited",
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             isNew: true
           };
@@ -61,7 +61,7 @@ export default function Header({ scrolled }) {
 
       setBalance(currentBalanceRaw.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
       prevBalanceRef.current = currentBalanceRaw;
-    } catch (err) { console.error("Lỗi cập nhật số dư:", err); }
+    } catch (err) { console.error("Error updating balance:", err); }
   }, [client, account?.address]);
 
   // 3. Logic theo dõi sự kiện đấu giá
@@ -86,7 +86,7 @@ export default function Header({ scrolled }) {
               id: latestEvent.id.txDigest,
               amount: (Number(bidData.bid_amount || 0) / 1e9).toFixed(2),
               isUp: isMyBid,
-              title: isMyBid ? "ĐẶT THẦU THÀNH CÔNG" : "BẠN ĐÃ BỊ VƯỢT THẦU",
+              title: isMyBid ? "BID PLACED SUCCESSFULLY" : "YOU HAVE BEEN OUTBID",
               time: new Date(Number(latestEvent.timestampMs)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
               isNew: true
             };
@@ -95,7 +95,7 @@ export default function Header({ scrolled }) {
           setLastEventId(latestEvent.id.txDigest);
         }
       }
-    } catch (err) { console.error("Lỗi sự kiện:", err); }
+    } catch (err) { console.error("Event processing error:", err); }
   }, [client, account?.address, lastEventId]);
 
   useEffect(() => {

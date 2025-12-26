@@ -222,10 +222,10 @@ export default function CreateAuction() {
                                 <Loader2 className="animate-spin text-blue-500 relative z-10" size={40} />
                             </div>
                             <h3 className="text-lg md:text-xl font-black italic uppercase tracking-tighter mb-2 text-center">
-                                Đang xử lý <span className="text-blue-500">Dữ liệu</span>
+                                Processing… <span className="text-blue-500">Data</span>
                             </h3>
                             <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] text-center leading-relaxed">
-                                Hệ thống đang nạp tranh lên IPFS <br /> & xác thực trên Sui Blockchain
+                                The system is uploading the artwork to IPFS<br /> & Authenticating on the Sui Blockchain…
                             </p>
                         </motion.div>
                     </motion.div>
@@ -247,7 +247,7 @@ export default function CreateAuction() {
                     </motion.h1>
                     <div className="flex items-center justify-center gap-2 md:gap-3">
                         <div className="h-px w-8 md:w-12 bg-blue-500/50" />
-                        <p className="text-blue-400 font-black uppercase tracking-[0.2em] md:tracking-[0.4em] text-[8px] md:text-[10px]">Đúc NFT & Mở đấu giá từ thiện</p>
+                        <p className="text-blue-400 font-black uppercase tracking-[0.2em] md:tracking-[0.4em] text-[8px] md:text-[10px]">Mint NFT & Launch Charity Auction</p>
                         <div className="h-px w-8 md:w-12 bg-blue-500/50" />
                     </div>
                 </header>
@@ -320,12 +320,12 @@ export default function CreateAuction() {
                                                         Nạp <span className="text-blue-500 text-glow">Art Work</span>
                                                     </h3>
                                                     <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] max-w-[200px] mx-auto leading-relaxed">
-                                                        Hỗ trợ các định dạng hình ảnh chất lượng cao
+                                                        Supports High-Quality Image Formats
                                                     </p>
                                                 </div>
 
                                                 <div className="relative z-10 px-6 py-3 bg-blue-500 text-white rounded-2xl shadow-lg shadow-blue-500/20">
-                                                    <span className="text-[10px] font-black uppercase italic tracking-widest">Chọn tệp ngay</span>
+                                                    <span className="text-[10px] font-black uppercase italic tracking-widest">Choose File</span>
                                                 </div>
 
                                                 <input
@@ -350,15 +350,15 @@ export default function CreateAuction() {
                                 {/* Tên vật phẩm */}
                                 <div className="space-y-3">
                                     <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                        <Tag size={12} /> Tên vật phẩm
+                                        <Tag size={12} /> Asset Name
                                     </label>
-                                    <input required name="name" placeholder="VÍ DỤ: TRỜI ĐÊM ĐÀ LẠT..." className="w-full bg-black/40 px-5 py-4 rounded-[18px] md:rounded-[22px] border border-white/5 outline-none focus:border-blue-500/50 transition-all font-black uppercase text-[10px] md:text-xs" onChange={handleInputChange} />
+                                    <input required name="name" placeholder="EXAMPLE: DA LAT NIGHT SKY... " className="w-full bg-black/40 px-5 py-4 rounded-[18px] md:rounded-[22px] border border-white/5 outline-none focus:border-blue-500/50 transition-all font-black uppercase text-[10px] md:text-xs" onChange={handleInputChange} />
                                 </div>
 
                                 {/* Giá khởi điểm */}
                                 <div className="space-y-3">
                                     <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                        <SuiIcon /> Giá (SUI)
+                                        <SuiIcon /> PRICE (SUI)
                                     </label>
 
                                     <input required name="startPrice" type="number" step="0.1" placeholder="0.00" className="w-full bg-black/40 px-5 py-4 rounded-[18px] md:rounded-[22px] border border-white/5 outline-none focus:border-blue-500/50 transition-all font-black text-sm text-blue-400" onChange={handleInputChange} />
@@ -370,7 +370,7 @@ export default function CreateAuction() {
                                 {/* Hàng tiêu đề: Nhãn bên trái, Nút bên phải */}
                                 <div className="flex justify-between items-center px-1">
                                     <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                        <FileText size={12} /> Miêu tả chi tiết
+                                        <FileText size={12} /> Detailed Description
                                     </label>
 
                                     <motion.button
@@ -386,7 +386,7 @@ export default function CreateAuction() {
                                         ) : (
                                             <Sparkles size={10} />
                                         )}
-                                        {isAiLoading ? "Đang soạn..." : "✨ AI Viết"}
+                                        {isAiLoading ? "Đang soạn..." : "✨ AI Writing"}
                                     </motion.button>
                                 </div>
 
@@ -395,7 +395,7 @@ export default function CreateAuction() {
                                     required
                                     name="description"
                                     value={formData.description} // Đừng quên thêm value để AI điền chữ vào được
-                                    placeholder="CHIA SẺ CÂU CHUYỆN..."
+                                    placeholder="SHARE YOUR STORY... "
                                     rows="3"
                                     className="w-full bg-black/40 p-5 rounded-[22px] md:rounded-[30px] border border-white/5 outline-none focus:border-blue-500/50 transition-all text-[10px] md:text-xs font-bold uppercase leading-relaxed"
                                     onChange={handleInputChange}
@@ -404,15 +404,15 @@ export default function CreateAuction() {
                             {/* Thời gian */}
                             <div className="space-y-3">
                                 <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                    <Clock size={12} /> Thời hạn
+                                    <Clock size={12} /> End Date
                                 </label>
                                 <div className="grid grid-cols-2 gap-3 md:gap-4">
                                     <div className="flex items-center bg-black/40 rounded-[18px] border border-white/5 pr-4 focus-within:border-blue-500/50">
-                                        <input required name="hours" type="number" className="w-full bg-transparent px-5 py-4 outline-none font-black text-xs" placeholder="GIỜ" onChange={handleInputChange} />
+                                        <input required name="hours" type="number" className="w-full bg-transparent px-5 py-4 outline-none font-black text-xs" placeholder="HOURS" onChange={handleInputChange} />
                                         <span className="text-[9px] font-black text-slate-600">H</span>
                                     </div>
                                     <div className="flex items-center bg-black/40 rounded-[18px] border border-white/5 pr-4 focus-within:border-blue-500/50">
-                                        <input required name="minutes" type="number" className="w-full bg-transparent px-5 py-4 outline-none font-black text-xs" placeholder="PHÚT" onChange={handleInputChange} />
+                                        <input required name="minutes" type="number" className="w-full bg-transparent px-5 py-4 outline-none font-black text-xs" placeholder="MINUTES" onChange={handleInputChange} />
                                         <span className="text-[9px] font-black text-slate-600">M</span>
                                     </div>
                                 </div>
@@ -429,7 +429,7 @@ export default function CreateAuction() {
                                         }`}
                                 >
                                     {isProcessing ? <Loader2 className="animate-spin" size={20} /> : <Zap size={20} />}
-                                    {isProcessing ? "ĐANG XỬ LÝ..." : "BẮT ĐẦU ĐẤU GIÁ"}
+                                    {isProcessing ? "PROCESSING… " : "START AUCTION"}
                                 </motion.button>
                             </div>
                         </form>

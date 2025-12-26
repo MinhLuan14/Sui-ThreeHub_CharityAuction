@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 
 export default function Home() {
     const stats = [
-        { label: "Tổng quyên góp", value: "128,450", unit: "SUI", icon: <TrendingUp />, color: "from-cyan-500 to-blue-600" },
-        { label: "Trẻ em được giúp", value: "3,200", unit: "+", icon: <Users />, color: "from-purple-500 to-pink-500" },
-        { label: "Giao dịch an toàn", value: "100", unit: "%", icon: <ShieldCheck />, color: "from-emerald-500 to-teal-400" }
+        { label: "Total Donations", value: "128,450", unit: "SUI", icon: <TrendingUp />, color: "from-cyan-500 to-blue-600" },
+        { label: "Children Helped", value: "3,200", unit: "+", icon: <Users />, color: "from-purple-500 to-pink-500" },
+        { label: "Secure Transactions", value: "100", unit: "%", icon: <ShieldCheck />, color: "from-emerald-500 to-teal-400" }
     ];
 
     // Tạo 100 hạt sáng rải rác toàn màn hình
@@ -126,17 +126,17 @@ export default function Home() {
                     </h1>
 
                     <p className="text-slate-400 max-w-2xl mx-auto text-xl font-medium mb-16 leading-relaxed">
-                        Nền tảng đấu giá NFT thiện nguyện <span className="text-white font-bold">minh bạch</span> trên Sui. <br />
-                        Mọi đóng góp được lưu trữ vĩnh viễn và gửi trực tiếp đến những hoàn cảnh cần giúp đỡ.
+                        An NFT Auction Platform for Charity <span className="text-white font-bold">Transparency</span> on-Sui. <br />
+                        All contributions are permanently recorded and delivered directly to those in need.
                     </p>
 
                     <div className="flex flex-col md:flex-row justify-center gap-6">
                         <Link to="/explore" className="group relative px-16 py-7 bg-white text-black rounded-2xl font-black uppercase italic overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)]">
-                            <span className="relative z-10 flex items-center gap-3 text-xl">BẮT ĐẦU NGAY <ArrowRight size={24} /></span>
+                            <span className="relative z-10 flex items-center gap-3 text-xl"> GET STARTED<ArrowRight size={24} /></span>
                             <div className="absolute inset-0 bg-cyan-400 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         </Link>
                         <Link to="/create" className="px-16 py-7 bg-[#ffffff08] border border-white/10 rounded-2xl font-black uppercase italic hover:bg-white/10 transition-all backdrop-blur-xl text-xl">
-                            TẠO CHIẾN DỊCH
+                            CREATE CAMPAIGN
                         </Link>
                     </div>
                 </motion.div>

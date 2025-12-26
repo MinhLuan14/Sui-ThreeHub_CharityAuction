@@ -204,7 +204,7 @@ export default function Profile() {
 
             <Wallet size={84} className="text-sui-cyan mb-8 animate-pulse relative z-10" />
 
-            <h2 className="text-2xl font-black uppercase italic tracking-widest relative z-10">Kết nối ví để tiếp tục</h2>
+            <h2 className="text-2xl font-black uppercase italic tracking-widest relative z-10">Connect your wallet to continue</h2>
 
         </div>
 
@@ -276,11 +276,11 @@ export default function Profile() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
 
-                    <StatCard icon={<Heart size={32} className="text-pink-500" />} label="Tổng quyên góp" value={`${stats.totalDonated} SUI`} />
+                    <StatCard icon={<Heart size={32} className="text-pink-500" />} label="Total Donations" value={`${stats.totalDonated} SUI`} />
 
                     <StatCard icon={<PackagePlus size={32} className="text-sui-cyan" />} label="Sản phẩm đã tạo" value={createdAuctions.length} />
 
-                    <StatCard icon={<Zap size={32} className="text-white" />} label="Đang dẫn đầu" value={activeBids.length} highlight />
+                    <StatCard icon={<Zap size={32} className="text-white" />} label="Currently Leading" value={activeBids.length} highlight />
 
                 </div>
 
@@ -296,7 +296,7 @@ export default function Profile() {
 
                             className={`text-xs font-black uppercase italic tracking-widest transition-all relative ${activeTab === id ? 'text-sui-cyan' : 'text-white/30 hover:text-white/60'}`}>
 
-                            {id === 'bidding' ? 'Đang đấu giá' : id === 'created' ? 'Đã tải lên' : 'Bộ sưu tập'}
+                            {id === 'bidding' ? 'Auction in Progress' : id === 'created' ? 'Uploaded' : 'Artwork Collection'}
 
                             {activeTab === id && (
 
