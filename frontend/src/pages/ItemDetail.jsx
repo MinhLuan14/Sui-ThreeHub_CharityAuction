@@ -69,7 +69,7 @@ export default function ItemDetails() {
             const newHighestBid = Number(fields.highest_bid) / 1e9;
             if (newHighestBid > lastHighestBidRef.current) {
                 if (lastHighestBidRef.current !== 0 && !isManualUpdate) {
-                    toast.success(`Giá thầu mới: ${newHighestBid} SUI`, { id: 'price-update', icon: '🔥' });
+                    toast.success(`New Bid: ${newHighestBid} SUI`, { id: 'price-update', icon: '🔥' });
                 }
                 lastHighestBidRef.current = newHighestBid;
             }
@@ -77,11 +77,11 @@ export default function ItemDetails() {
             const display = res.data?.display?.data;
             const nftData = deepExtractNFT(fields.nft);
 
-            const rawName = display?.name || nftData?.name || "Vật phẩm đấu giá";
+            const rawName = display?.name || nftData?.name || "Auction Item";
             const rawImage = display?.image_url || nftData?.image_url || nftData?.metadata || nftData?.url;
 
             let finalName = rawName;
-            let finalDesc = display?.description || nftData?.description || "Không có miêu tả chi tiết.";
+            let finalDesc = display?.description || nftData?.description || "No detailed description available.";
 
             if (rawName.includes('|')) {
                 const parts = rawName.split('|');
@@ -122,7 +122,7 @@ export default function ItemDetails() {
             setTimeLeft(Math.max(0, Math.floor((Number(fields.end_time) - Date.now()) / 1000)));
 
         } catch (err) {
-            console.error("Lỗi đồng bộ:", err);
+            console.error("Sync error:", err);
         } finally {
             setLoading(false);
         }
@@ -141,11 +141,11 @@ export default function ItemDetails() {
     }, [timeLeft]);
 
     const handleBid = async () => {
-        if (!currentAccount) return toast.error("Vui lòng kết nối ví!");
+        if (!currentAccount) return toast.error("Please connect your wallet!");
         const bidValue = Number(bidAmount);
         const currentHighest = auction?.highestBid || 0;
         if (!bidAmount || bidValue <= currentHighest) {
-            return toast.error(`Giá thầu phải cao hơn giá hiện tại (${currentHighest} SUI)!`);
+            return toast.error(`Bid must be higher than ${currentHighest} SUI!`);
         }
 
         try {
@@ -161,19 +161,19 @@ export default function ItemDetails() {
 
             signAndExecute({ transaction: txb }, {
                 onSuccess: (result) => {
-                    toast.success("Đặt thầu thành công!");
+                    toast.success("Bid placed successfully!");
                     setBidAmount('');
                     setTimeout(() => fetchAllData(true, result.digest), 2000);
                 },
-                onError: (err) => toast.error("Giao dịch thất bại: " + err.message)
+                onError: (err) => toast.error("Transaction failed: " + err.message)
             });
         } catch (err) {
-            toast.error("Lỗi khởi tạo giao dịch.");
+            toast.error("Initialization error.");
         }
     };
 
     const handleEndAuction = async () => {
-        if (!currentAccount) return toast.error("Vui lòng kết nối ví!");
+        if (!currentAccount) return toast.error("Please connect your wallet!");
         try {
             const txb = new SuiTransaction();
             txb.moveCall({
@@ -183,13 +183,13 @@ export default function ItemDetails() {
             txb.setGasBudget(100000000);
             signAndExecute({ transaction: txb }, {
                 onSuccess: (result) => {
-                    toast.success("Xử lý kết thúc thành công!", { icon: '🏆' });
+                    toast.success("Auction settled successfully!", { icon: '🏆' });
                     setTimeout(() => fetchAllData(true, result.digest), 2000);
                 },
-                onError: (err) => toast.error("Lỗi: " + err.message)
+                onError: (err) => toast.error("Error: " + err.message)
             });
         } catch (e) {
-            toast.error("Lỗi khởi tạo giao dịch.");
+            toast.error("Initialization error.");
         }
     };
 
@@ -210,7 +210,7 @@ export default function ItemDetails() {
         <div className="min-h-screen bg-[#050B18] text-white pt-24 md:pt-32 pb-20 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
 
-                {/* TRÁI: Media & Chi tiết (Chiếm 5/12 cột) */}
+                {/* LEFT: Media & Details */}
                 <div className="lg:col-span-5 space-y-6 md:space-y-8">
                     <div className="relative rounded-[30px] md:rounded-[40px] overflow-hidden bg-[#0A1120] border border-white/10 aspect-square flex items-center justify-center shadow-2xl">
                         {!imageError && auction?.images?.length > 0 ? (
@@ -231,13 +231,13 @@ export default function ItemDetails() {
 
                     <div className="p-6 md:p-8 bg-white/5 rounded-[25px] md:rounded-[35px] border border-white/5 backdrop-blur-md">
                         <p className="text-cyan-400 text-[10px] font-black tracking-[0.3em] mb-4 uppercase flex items-center gap-2">
-                            <Tag size={14} /> Chi tiết vật phẩm
+                            <Tag size={14} /> Item Description
                         </p>
                         <p className="text-slate-300 leading-relaxed italic text-base md:text-lg">{auction?.description}</p>
                     </div>
                 </div>
 
-                {/* PHẢI: Bidding & Action (Chiếm 7/12 cột) */}
+                {/* RIGHT: Bidding & Action */}
                 <div className="lg:col-span-7 space-y-6 md:space-y-8">
                     <h1 className="text-3xl sm:text-4xl md:text-6xl font-black italic uppercase text-white leading-tight tracking-tighter">
                         {auction?.name}
@@ -246,14 +246,14 @@ export default function ItemDetails() {
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                         <div className="p-6 md:p-8 rounded-[25px] md:rounded-[35px] bg-white/5 border border-white/5">
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Thời gian còn lại</span>
+                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Time Remaining</span>
                             <div className="text-3xl md:text-4xl font-mono font-bold mt-2 text-white">
                                 {timeLeft > 0 ? formatTime(timeLeft) : "00:00:00"}
                             </div>
                         </div>
 
                         <div className="p-6 md:p-8 rounded-[25px] md:rounded-[35px] bg-cyan-500/10 border border-cyan-500/20">
-                            <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Giá hiện tại</span>
+                            <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Current Bid</span>
                             <div className="text-3xl md:text-4xl font-black italic text-cyan-400 mt-2 flex items-baseline gap-2">
                                 <AnimatePresence mode="wait">
                                     <motion.span
@@ -278,7 +278,7 @@ export default function ItemDetails() {
                                         type="number"
                                         value={bidAmount}
                                         onChange={(e) => setBidAmount(e.target.value)}
-                                        placeholder={`Giá > ${auction?.highestBid}`}
+                                        placeholder={`Price > ${auction?.highestBid}`}
                                         className="w-full bg-black/50 border-2 border-white/5 rounded-[20px] md:rounded-[30px] p-5 md:p-8 text-2xl md:text-3xl font-black text-cyan-400 outline-none focus:border-cyan-500 transition-all placeholder:text-white/10"
                                     />
                                     <Wallet className="absolute right-6 md:right-8 top-1/2 -translate-y-1/2 text-slate-700 hidden sm:block" size={30} />
@@ -288,7 +288,7 @@ export default function ItemDetails() {
                                     disabled={isTxPending}
                                     className="w-full py-6 md:py-8 bg-cyan-500 hover:bg-white text-black rounded-[20px] md:rounded-[30px] font-black text-xl md:text-2xl italic uppercase transition-all flex items-center justify-center gap-3 active:scale-95 shadow-xl shadow-cyan-500/20"
                                 >
-                                    {isTxPending ? <Loader2 className="animate-spin" /> : "Đặt giá ngay"}
+                                    {isTxPending ? <Loader2 className="animate-spin" /> : "Place Bid Now"}
                                 </button>
                             </div>
                         ) : (
@@ -298,27 +298,27 @@ export default function ItemDetails() {
                                     <Sparkles className="absolute -top-2 -right-2 text-cyan-400 animate-pulse" />
                                 </div>
                                 <div>
-                                    <h2 className="text-3xl md:text-4xl font-black uppercase italic">Phiên đã kết thúc</h2>
+                                    <h2 className="text-3xl md:text-4xl font-black uppercase italic">Auction Ended</h2>
                                     {auction?.highestBidder ? (
                                         <div className="mt-4 p-4 md:p-6 bg-white/5 rounded-[20px] md:rounded-[30px] border border-white/10">
-                                            <p className="text-slate-500 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-2">Người thắng cuộc</p>
+                                            <p className="text-slate-500 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-2">Winner Address</p>
                                             <p className="font-mono text-cyan-400 font-bold break-all text-xs md:text-sm">
                                                 {auction.highestBidder}
                                             </p>
                                         </div>
                                     ) : (
-                                        <p className="text-red-400 mt-2 italic font-medium text-lg">Không có lượt thầu.</p>
+                                        <p className="text-red-400 mt-2 italic font-medium text-lg">No bids placed.</p>
                                     )}
                                 </div>
                                 <div className="grid grid-cols-1 gap-4 pt-4">
                                     {currentAccount?.address === auction?.highestBidder && auction?.highestBidder && (
                                         <button onClick={handleEndAuction} className="w-full py-5 md:py-7 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-[20px] md:rounded-[30px] font-black text-xl md:text-2xl uppercase italic shadow-xl">
-                                            Nhận NFT về ví
+                                            Claim NFT to Wallet
                                         </button>
                                     )}
                                     {currentAccount?.address === auction?.seller && (
                                         <button onClick={handleEndAuction} className="w-full py-5 md:py-7 bg-white text-black rounded-[20px] md:rounded-[30px] font-black text-lg md:text-xl uppercase italic flex items-center justify-center gap-3 shadow-xl">
-                                            <History size={24} /> Lưu vào lịch sử
+                                            <History size={24} /> Archive Auction
                                         </button>
                                     )}
                                 </div>
@@ -330,7 +330,7 @@ export default function ItemDetails() {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3 px-4">
                             <Activity className="text-cyan-500" size={16} />
-                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Lịch sử thầu</span>
+                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Bid History</span>
                         </div>
                         <div className="space-y-3 max-h-[400px] overflow-y-auto no-scrollbar pr-1">
                             <AnimatePresence mode="popLayout">
@@ -354,7 +354,7 @@ export default function ItemDetails() {
                                     ))
                                 ) : (
                                     <div className="text-center py-10 border border-dashed border-white/10 rounded-[30px]">
-                                        <p className="text-slate-600 uppercase text-[9px] font-black tracking-[0.3em]">Trống</p>
+                                        <p className="text-slate-600 uppercase text-[9px] font-black tracking-[0.3em]">No Bids Yet</p>
                                     </div>
                                 )}
                             </AnimatePresence>
