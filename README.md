@@ -42,7 +42,7 @@ Frontend: React, TypeScript, Tailwind CSS.
 
 Thư viện Web3: @mysten/dapp-kit, @mysten/sui/transactions.
 
-🚀 Thông Tin Triển Khai (Deployment) Mạng: Sui Blockchain Testnet. git clone https://github.com/jaySmith-bad/CHARITY_AUCTION.git
+🚀 Thông Tin Triển Khai (Deployment) Mạng: Sui Blockchain Testnet. git clone https://github.com/MinhLuan14/Sui-ThreeHub_CharityAuction
 
 🚀 Tầm Nhìn Phát Triển Tương Lai cho nhóm 3HUB với dự án CHARITY AUCTION
 
@@ -68,4 +68,5 @@ Trải Nghiệm Người Dùng Cao Cấp (Advanced UX/UI) zkSend Integration: Ch
 2. `npm install`
 
 3. `npm run dev`
+
 
