@@ -317,7 +317,7 @@ export default function CreateAuction() {
 
                                                 <div className="space-y-3 relative z-10">
                                                     <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter">
-                                                        Nạp <span className="text-blue-500 text-glow">Art Work</span>
+                                                        Consign <span className="text-blue-500 text-glow">Art Work</span>
                                                     </h3>
                                                     <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] max-w-[200px] mx-auto leading-relaxed">
                                                         Supports High-Quality Image Formats
